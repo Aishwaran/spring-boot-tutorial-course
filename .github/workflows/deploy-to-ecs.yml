@@ -42,12 +42,12 @@ jobs:
           docker build -t $REPOSITORY_URI:$IMAGE_TAG -f student-management-system/Dockerfile student-management-system
           docker push $REPOSITORY_URI:$IMAGE_TAG
 
-      # Step 4: Deploy to ECS
-      - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ecs-task-definition.json
-          service: ${{ secrets.ECS_SERVICE_NAME }}
-          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
-          image: ${{ secrets.ECR_REPOSITORY_URI }}:${{ github.sha }}
-          wait-for-service-stability: true
+      # # Step 4: Deploy to ECS
+      # - name: Deploy to ECS
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ecs-task-definition.json
+      #     service: ${{ secrets.ECS_SERVICE_NAME }}
+      #     cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+      #     image: ${{ secrets.ECR_REPOSITORY_URI }}:${{ github.sha }}
+      #     wait-for-service-stability: true
