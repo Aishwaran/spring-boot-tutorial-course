@@ -24,7 +24,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 # Update with your desired region
+          aws-region: ap-south-1 # Update with your desired region
 
       - name: Log in to Amazon ECR
         id: login-ecr
@@ -32,17 +32,20 @@ jobs:
 
       # Step 3: Build and push the Docker image to ECR
       - name: Build, tag, and push Docker image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
         run: |
-          IMAGE_TAG=latest
-          REPOSITORY_URI=${{ secrets.ECR_REPOSITORY_URI }}
+          echo "Building Docker image with tag: $IMAGE_TAG"
           docker build -t $REPOSITORY_URI:$IMAGE_TAG .
           docker push $REPOSITORY_URI:$IMAGE_TAG
 
-      # Step 4: Deploy to ECS
-      - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ecs-task-definition.json
-          service: ${{ secrets.ECS_SERVICE_NAME }}
-          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
-          wait-for-service-stability: true
+      # # Step 4: Deploy to ECS
+      # - name: Deploy to ECS
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ecs-task-definition.json
+      #     service: ${{ secrets.ECS_SERVICE_NAME }}
+      #     cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+      #     image: ${{ secrets.ECR_REPOSITORY_URI }}:${{ github.sha }}
+          # wait-for-service-stability: true
